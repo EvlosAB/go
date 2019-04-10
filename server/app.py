@@ -1,10 +1,32 @@
 #!/usr/bin/env python3
 from json import dumps, loads
 from flask import Flask, request, make_response
-from .models import db, Token, Link
+from models import db, Token, Link
 
 app = Flask(__name__)
 db.init_app(app)
+
+DATABASE_NAME = 'go'
+DATABASE_USER = 'root'
+DATABASE_PASSWORD = '1234'
+DATABASE_HOST = 'localhost'
+DATABASE_PORT = 3306
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DATABASE_USER}:'
+f'{DATABASE_PASSWORD}@{DATABASE_HOST}:'
+f'{DATABASE_PORT}/{DATABASE_NAME}'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+
+
+def create_database():
+    with app.app_context():
+        db.create_all()
+        db.session.commit()
+
+
+create_database()
 
 
 def return_data(data, status_code=200, json=True):
@@ -27,17 +49,17 @@ def hello():
 @app.route('/link', methods=['GET', 'POST'])
 def link():
     if request.method == 'POST':
-        json_data = request.get_json()
-        data = loads(json_data)
-
+        data = request.get_json()
         link_name = data['link_name']
         link_url = data['link_url']
 
         # Add link to database
         link = Link(link_name=link_name, link_url=link_url)
 
-        db.session.add(token)
+        db.session.add(link)
         db.session.commit()
+
+        return return_data({'link': link.get_dict()}, 201)
 
     elif request.method == 'GET':
         link_name = request.args.get('link', None)
