@@ -33,7 +33,7 @@ def setup_cli(token_name, token, server_url):
     token_name_i = Setting(
         setting_name='token_name', setting_value=token_name)
     token_i = Setting(setting_name='token', setting_value=token)
-    token_url_i = Setting(setting_name='url', setting_value=token_name)
+    token_url_i = Setting(setting_name='url', setting_value=server_url)
 
     session.add(token_name_i)
     session.add(token_i)
