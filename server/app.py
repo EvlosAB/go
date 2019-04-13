@@ -20,12 +20,19 @@ f'{DATABASE_PORT}/{DATABASE_NAME}'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
 
 
+def delete_database():
+    with app.app_context():
+        db.drop_all()
+        db.session.commit()
+
+
 def create_database():
     with app.app_context():
         db.create_all()
         db.session.commit()
 
 
+delete_database()
 create_database()
 
 
@@ -46,29 +53,34 @@ def hello():
             {'message': 'Hello there! Everything works as expected.'})
 
 
-@app.route('/link', methods=['GET', 'POST'])
+@app.route('/link/<link_name>', methods=['GET'])
+def specific_link(link_name):
+    link = Link.query.filter_by(link_name=link_name).first()
+
+    if not link:
+        return return_data({}, 404)
+
+    return return_data({'link': link.get_dict()})
+
+
+@app.route('/link', methods=['POST'])
 def link():
-    if request.method == 'POST':
-        data = request.get_json()
-        link_name = data['link_name']
-        link_url = data['link_url']
+    data = request.get_json()
+    link_name = data['link_name']
+    link_url = data['link_url']
 
-        # Add link to database
-        link = Link(link_name=link_name, link_url=link_url)
+    previous_link = Link.query.filter_by(link_name=link_name).first()
+    if previous_link:
+        return return_data(
+            {'message': 'A link with that name already exists'}, 409)
 
-        db.session.add(link)
-        db.session.commit()
+    # Add link to database
+    link = Link(link_name=link_name, link_url=link_url)
 
-        return return_data({'link': link.get_dict()}, 201)
+    db.session.add(link)
+    db.session.commit()
 
-    elif request.method == 'GET':
-        link_name = request.args.get('link', None)
-        link = Link.query.filter_by(link_name=link_name).first()
-
-        if not link:
-            return return_data({}, 404)
-
-        return return_data({'link': link.get_dict()})
+    return return_data({'link': link.get_dict()}, 201)
 
 
 @app.route("/links", methods=['GET'])

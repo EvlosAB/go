@@ -7,7 +7,7 @@ class Token(db.Model):
     __tablename__ = 'tokens'
 
     token_id = db.Column(db.Integer(), primary_key=True)
-    token_name = db.Column(db.String(80), nullable=False)
+    token_name = db.Column(db.String(80), nullable=False, unique=True)
     token = db.Column(db.String(120), nullable=False)
 
     def generate_random_token(self):
@@ -28,7 +28,7 @@ class Link(db.Model):
     __tablename__ = 'links'
 
     link_id = db.Column(db.Integer(), primary_key=True)
-    link_name = db.Column(db.String(80), nullable=False)
+    link_name = db.Column(db.String(80), nullable=False, unique=True)
     link_url = db.Column(db.TEXT, nullable=False)
 
     def get_dict(self):
