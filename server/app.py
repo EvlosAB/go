@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+import requests
 from json import dumps, loads
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, redirect
 from models import db, Token, Link
 
 app = Flask(__name__)
@@ -45,6 +46,21 @@ def return_data(data, status_code=200, json=True):
     response.status_code = status_code
 
     return response
+
+
+@app.route('/<link_name>')
+def redirect_to(link_name):
+    try:
+        r = requests.get(f'{request.url_root}link/{link_name}')
+        r.raise_for_status()
+
+        data = r.json()
+        url = data['link']['link_url']
+
+        return redirect(url, code=301)
+
+    except requests.HTTPError as e:
+        return f'There was an error ({e})'
 
 
 @app.route("/hello", methods=['GET'])
