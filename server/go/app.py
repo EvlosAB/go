@@ -69,14 +69,22 @@ def hello():
             {'message': 'Hello there! Everything works as expected.'})
 
 
-@app.route('/link/<link_name>', methods=['GET'])
+@app.route('/link/<link_name>', methods=['GET', 'DELETE'])
 def specific_link(link_name):
     link = Link.query.filter_by(link_name=link_name).first()
-
     if not link:
         return return_data({}, 404)
 
-    return return_data({'link': link.get_dict()})
+    # GET method
+    if request.method == 'GET':
+        return return_data({'link': link.get_dict()})
+
+    # DELETE method
+    db.session.delete(link)
+    db.session.commit()
+
+    # Return 204 No Content as the entry was deleted
+    return return_data({}, 204)
 
 
 @app.route('/link', methods=['POST'])
