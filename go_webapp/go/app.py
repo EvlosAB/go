@@ -18,8 +18,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DATABASE_USER}:'
 f'{DATABASE_PASSWORD}@{DATABASE_HOST}:'
 f'{DATABASE_PORT}/{DATABASE_NAME}'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-
 
 def delete_database():
     with app.app_context():
