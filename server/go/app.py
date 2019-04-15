@@ -33,10 +33,6 @@ def create_database():
         db.session.commit()
 
 
-delete_database()
-create_database()
-
-
 def return_data(data, status_code=200, json=True):
     json_data = dumps(data)
     response = make_response(json_data)
