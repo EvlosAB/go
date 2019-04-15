@@ -29,5 +29,5 @@ the ip and not take in to account what magic a reverse proxy does.
 To create, modify or delete links you will need to use the go-cli (https://github.com/EvlosCo/go-cli) or you can interact
 with the API directly with a tool like Postman or even a web browser.
 
-### Future additions
+## Roadmap
 * Tokens and protected endpoints
