@@ -5,18 +5,20 @@ from flask import Flask, request, make_response, redirect
 from .models import db, Token, Link
 
 app = Flask(__name__)
-db.init_app(app)
 
 DATABASE_NAME = os.environ['MYSQL_DATABASE']
 DATABASE_USER = os.environ['MYSQL_USER']
 DATABASE_PASSWORD = os.environ['MYSQL_PASSWORD']
 DATABASE_HOST = os.environ['MYSQL_HOST']
-DATABASE_PORT = os.environ['MYSQL_PORT']
+DATABASE_PORT = os.environ.get('MYSQL_PORT', 3306)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DATABASE_USER}:'
-f'{DATABASE_PASSWORD}@{DATABASE_HOST}:'
-f'{DATABASE_PORT}/{DATABASE_NAME}'
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f'mysql+pymysql://{DATABASE_USER}:'
+    f'{DATABASE_PASSWORD}@{DATABASE_HOST}'
+    f':{DATABASE_PORT}/{DATABASE_NAME}')
+
+db.init_app(app)
 
 
 def delete_database():
